@@ -1,0 +1,90 @@
+#--------------------------- Makefile for MARION.EXE on NT --------------
+#
+#  This makefile assumes you are using MS VC++ 5.x or later
+#------------------------------------------------------------------------
+# The contents of this file are subject to the InterBase Public License
+# Version 1.0 (the "License"); you may not use this file except in
+# compliance with the License.
+# 
+# You may obtain a copy of the License at http://www.Inprise.com/IPL.html.
+# 
+# Software distributed under the License is distributed on an "AS IS"
+# basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+# the License for the specific language governing rights and limitations
+# under the License.  The Original Code was created by Inprise
+# Corporation and its predecessors.
+# 
+# Portions created by Inprise Corporation are Copyright (C) Inprise
+# Corporation. All Rights Reserved.
+# 
+# Contributor(s): ______________________________________.
+
+INTERBASE=	..\interbase
+GPRE=		$(INTERBASE)\bin\gpre
+GPRE_FLAGS=     -n -z -m 
+CC=             cl
+O_EXE_SWITCH=   -o
+RM=             -del /Q
+MV=             move
+TOUCH=          touch
+CP=             copy
+ECHO=           echo
+
+MS_FLAGS=	-w -G6 -Gd -MD -I..\interbase\include -Fo -DWIN32_LEAN_AND_MEAN
+VERSION_CFLAGS=	-Ob2iytp -Gs -DWIN95 -DWIN32
+CFLAGS=		$(VERSION_CFLAGS) $(MS_FLAGS)
+LINK_OPTS=	
+CONLIBSDLL=             msvcrt.lib kernel32.lib
+ADVAPILIB=              advapi32.lib
+MPRLIB=                 mpr.lib
+WSOCKLIB=               wsock32.lib
+
+GDS_LINK=	..\jrd\ms_obj\client\gds32_ms.lib
+
+MARION_LINK=	$(GDS_LINK) $(ADVAPILIB)
+
+DEBUG_CFLAGS=         -Zi -FR -DWIN95
+DEBUG_LINK_OPTS=      -debug:full -debugtype:cv
+DEBUG_GDS_LINK=		..\jrd\ms_obj\clientd\gds32_ms.lib
+
+.SUFFIXES: .c .e
+.e.c:
+	$(EXPAND_DB) $<
+	$(GPRE) $(GPRE_FLAGS) $<
+	$(COMPRESS_DB) $<
+	$(TOUCH) $*.c
+
+.SUFFIXES: .bin .obj .c .cpp
+.c.obj:
+	$(CC) -c @&&?
+	$(CFLAGS) $<
+?
+#------------------------- Misc Utilities --------------------------------
+COMPRESS_DB=        compress_dbs
+EXPAND_DB=          expand_dbs
+
+#--------------------------------------------------------------------------
+
+DOT_E_FILES=    marion.c stuff.c mpexl.c 
+
+JRD_MISC=	..\jrd\ms_obj\client\isc.obj 
+
+MARION_OBJS=	$(DOT_E_FILES:.c=.obj) exec.obj $(GDS_OBJS)
+
+marion: $(MARION_OBJS) $(JRD_MISC)
+	-$(RM) marion.exe
+	$(CC) @&&!
+$** $(CFLAGS)
+$(MARION_LINK) $(CONLIBSDLL) USER32.LIB
+!
+
+marion.exe: marion.rsp
+	$(ECHO) $(CFLAGS) >tmp.rsp
+	$(ECHO) $(O_EXE_SWITCH)marion.exe >> tmp.rsp
+	$(CC) @tmp.rsp @marion.rsp
+
+marion.rsp: $(MARION_OBJS) $(MARION_LINK)
+	$(RM) $<
+	&$(ECHO) $** >> $<
+
+	$(TOUCH) marion.exe

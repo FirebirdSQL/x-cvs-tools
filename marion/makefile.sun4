@@ -1,0 +1,51 @@
+# The contents of this file are subject to the InterBase Public License
+# Version 1.0 (the "License"); you may not use this file except in
+# compliance with the License.
+# 
+# You may obtain a copy of the License at http://www.Inprise.com/IPL.html.
+# 
+# Software distributed under the License is distributed on an "AS IS"
+# basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+# the License for the specific language governing rights and limitations
+# under the License.  The Original Code was created by Inprise
+# Corporation and its predecessors.
+# 
+# Portions created by Inprise Corporation are Copyright (C) Inprise
+# Corporation. All Rights Reserved.
+# 
+# Contributor(s): ______________________________________.
+
+.SUFFIXES: .c .e
+.e.c :
+	$(GPRE) -m -raw $<
+
+INTERBASE = /usr/gds/maint4/interbase
+GPRE = $(INTERBASE)/bin/gpre
+CFLAGS = -w -g -I$(INTERBASE)/include
+JRD = /usr/gds/maint4/jrd/libgds_b.a -ldl
+OBJECTS = marion.o stuff.o exec.o mpexl.o
+
+marion	: $(OBJECTS)
+	cc -g $(OBJECTS) $(JRD) -o marion
+
+refresh :
+	-marion -v -a -c marion
+
+clean	:
+	-rm $(OBJECTS)
+	-rm marion.c stuff.c mpexl.c
+	-rm marion
+
+install : marion
+	-rm -f /usr/gds/bin/marion.old
+	-mv -f /usr/gds/bin/marion marion.old
+	cp marion /usr/gds/bin/marion
+
+marion.o	: marion.c marion.h
+marion.c	: marion.e
+stuff.o	: stuff.c marion.h
+stuff.c	: stuff.e
+exec.o	: exec.c marion.h
+mpexl.c	: mpexl.e
+mpexl.o	: mpexl.c marion.h
+
