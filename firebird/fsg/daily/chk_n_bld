@@ -1,0 +1,12 @@
+date >> ./buildlog 
+echo running chk_n_bld >> ./buildlog
+cd ../cvs
+./getit
+./mcl
+cd ../daily
+./build
+date >> ./buildlog 
+echo finished chk_n_bld >> ./buildlog
+echo " " >> ./buildlog    
+echo "--------------------------------" >> ./buildlog
+echo " " >> ./buildlog    

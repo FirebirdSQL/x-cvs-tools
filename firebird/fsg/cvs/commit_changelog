@@ -1,0 +1,8 @@
+export CVS_RSH=ssh
+export CVSROOT=fsg@cvs.firebird.sourceforge.net:/cvsroot/firebird  
+cvs -z4 commit -F c_log_message  interbase/ChangeLog
+
+
+
+
+

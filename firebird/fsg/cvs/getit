@@ -1,0 +1,5 @@
+cp ./interbase/this_build ./last_build
+export CVS_RSH='ssh'
+cvs  -z4 -dfsg@cvs.firebird.sourceforge.net:/cvsroot/firebird  co interbase
+
+#cvs  -dfsg@cvs.firebird.sourceforge.net:/cvsroot/firebird add interbase/build_docs/ibbuild_linux_cvs_build.html

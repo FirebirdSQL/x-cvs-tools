@@ -1,0 +1,40 @@
+THISBUILD=`cat ../cvs/interbase/this_build`
+LASTBUILD=`cat ../cvs/last_build`
+echo $LASTBUILD
+echo $THISBUILD
+if [ $THISBUILD -ne $LASTBUILD ]
+then
+  echo will build
+  rm -r ./interbase
+  cp -r ../cvs/interbase ./interbase
+  sed -e s/-Wall/-w/g ../cvs/interbase/builds/original/prefix.linux > ./interbase/builds/original/prefix.linux
+#  cp ./sfx.utilities ./interbase/builds/original/
+#  cp ./parse.sed ./interbase/dsql/  
+  cd ./interbase
+  export NOPROMPT_SETUP=Anything      
+  ./Configure.sh PROD
+  rm ./extlib/ib_udf  
+ 
+  make firebird
+  make examples
+  if [ -e ./extlib/ib_udf ]
+  then
+    make -f firebird/skywalker/install/Makefile csinstall    
+    rm ../fb_cs_linux_snapshot.tar.gz 
+    tar -czf "../fb_cs_linux_snapshot.tar.gz" csinstall 
+    scp ../fb_cs_linux_snapshot.tar.gz fsg@shell1.sf.net:/home/groups/f/fi/firebird/htdocs/download/snapshot_builds/linux
+    rm ./extlib/ib_udf  
+ fi
+  
+  make super_firebird
+  if [ -e ./extlib/ib_udf   ]
+  then
+    make -f firebird/skywalker/install/Makefile ssinstall
+    rm ../fb_ss_linux_snapshot.tar.gz 
+    tar -czf "../fb_ss_linux_snapshot.tar.gz" ssinstall
+    scp ../fb_ss_linux_snapshot.tar.gz fsg@shell1.sf.net:/home/groups/f/fi/firebird/htdocs/download/snapshot_builds/linux
+
+  fi
+else
+echo No build necessary!
+fi

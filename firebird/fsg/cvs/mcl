@@ -1,0 +1,13 @@
+THISBUILD=`cat ./interbase/this_build`
+LASTBUILD=`cat ./last_build`
+echo $LASTBUILD
+echo $THISBUILD
+if [ $THISBUILD -ne $LASTBUILD ]
+then
+echo Creating ChangeLog
+ ./make_changelog
+ ./commit_changelog
+ ./getit
+else
+echo No changes found!
+fi

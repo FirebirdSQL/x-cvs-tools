@@ -1,0 +1,5 @@
+export CVS_RSH=ssh
+export CVSROOT=fsg@cvs.firebird.sourceforge.net:/cvsroot/firebird
+cvs -z9 log interbase >log.txt
+./cvs2cl.pl -r -S -I ".*\.blob"  -I ".*\ChangeLog" --stdin <log.txt
+fmcl < ChangeLog > interbase/ChangeLog

@@ -1,0 +1,2 @@
+scp  fb_ss_linux_snapshot.tar.gz fsg@shell1.sf.net:/home/groups/ftp/pub/firebird/snapshot_builds/linux
+#scp  fb_cs_linux_snapshot.tar.gz fsg@shell1.sf.net:/home/groups/ftp/pub/firebird/snapshot_builds/linux
